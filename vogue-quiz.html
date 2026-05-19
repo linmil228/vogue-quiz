@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vogue Interview Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #fafaf8;
+    --gold: #b8902a;
+    --cream: #f5f2eb;
+    --grey: #555;
+    --light: #e8e4dc;
+  }
+
+  html, body {
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* COVER */
+  #cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .cover-line {
+    width: 1px;
+    height: 70px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 36px;
+  }
+
+  .cover-eyebrow {
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 22px;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(60px, 12vw, 120px);
+    font-weight: 900;
+    line-height: 0.88;
+    color: var(--black);
+    letter-spacing: -2px;
+    margin-bottom: 10px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(17px, 3vw, 24px);
+    color: var(--grey);
+    margin: 18px 0 44px;
+  }
+
+  .cover-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--grey);
+    max-width: 440px;
+    margin: 0 auto 48px;
+  }
+
+  .btn-start {
+    background: var(--black);
+    border: none;
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 16px 44px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .btn-start:hover { background: var(--gold); }
+
+  /* QUIZ */
+  #quiz {
+    display: none;
+    min-height: 100vh;
+    background: var(--white);
+    padding: 60px 20px 80px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .progress-wrap { margin-bottom: 56px; }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .progress-count {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: #aaa;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 1px;
+    background: var(--light);
+  }
+
+  .progress-fill {
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.5s ease;
+  }
+
+  .q-number {
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--black);
+    margin-bottom: 44px;
+  }
+
+  .options-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    background: transparent;
+    border: 1px solid var(--light);
+    color: var(--grey);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 18px 22px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+
+  .option-btn:hover {
+    border-color: var(--gold);
+    color: var(--black);
+    transform: translateX(4px);
+  }
+
+  .option-btn.selected {
+    border-color: var(--black);
+    color: var(--black);
+    background: var(--cream);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .opt-letter {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 3px;
+    min-width: 14px;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+  }
+
+  .btn-next {
+    background: var(--black);
+    border: none;
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .btn-next:hover:not(:disabled) { background: var(--gold); }
+  .btn-next:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  /* RESULT */
+  #result {
+    display: none;
+    min-height: 100vh;
+    background: var(--white);
+    padding: 80px 20px;
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .res-eyebrow {
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .res-verdict {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 7vw, 72px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--black);
+    margin-bottom: 14px;
+  }
+
+  .res-verdict em { font-style: italic; color: var(--gold); }
+
+  .res-divider {
+    width: 50px;
+    height: 1px;
+    background: var(--gold);
+    margin: 28px auto;
+  }
+
+  .res-score {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 36px;
+  }
+
+  .res-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.5vw, 22px);
+    line-height: 1.8;
+    color: var(--grey);
+    max-width: 520px;
+    margin: 0 auto 50px;
+  }
+
+  .res-tips {
+    background: var(--cream);
+    border-left: 2px solid var(--gold);
+    padding: 32px 36px;
+    text-align: left;
+    margin-bottom: 50px;
+  }
+
+  .res-tips-title {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .res-tips ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+  .res-tips li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--grey);
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .res-tips li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  .btn-restart {
+    background: transparent;
+    border: 1px solid var(--light);
+    color: #aaa;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-restart:hover { border-color: var(--black); color: var(--black); }
+
+  .fade-out { opacity: 0; transition: opacity 0.25s; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="cover-line"></div>
+  
+  <h1 class="cover-title">VOGUE<br><em>Interview</em></h1>
+  <p class="cover-subtitle">Готовы ли вы к собеседованию мечты?</p>
+  <p class="cover-desc">8 вопросов, которые проверят вашу уверенность, профессионализм и умение вести переговоры — так, как это принято в мире высокой журналистики.</p>
+  <button class="btn-start" onclick="startQuiz()">Начать тест</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span class="progress-label">Прогресс</span>
+      <span class="progress-count" id="progressCount">1 / 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="quizInner">
+    <div class="q-number" id="qNumber">Вопрос 01</div>
+    <div class="q-text" id="qText"></div>
+    <ul class="options-list" id="optionsList"></ul>
+    <div class="nav-row">
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>Следующий вопрос →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="res-eyebrow">Ваш результат</div>
+  <div class="res-verdict" id="resVerdict"></div>
+  <div class="res-divider"></div>
+  <div class="res-score" id="resScore"></div>
+  <div class="res-desc" id="resDesc"></div>
+  <div class="res-tips" id="resTips"></div>
+  <button class="btn-restart" onclick="restartQuiz()">← Пройти снова</button>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "Главный редактор Vogue спрашивает: «Расскажите о себе.» Что вы делаете?",
+    options: [
+      { text: "Рассказываете всё подряд — от школы до вчерашнего дня, чтобы произвести впечатление", points: 0 },
+      { text: "Чётко представляете себя: кто вы, что умеете, почему именно Vogue — и укладываетесь в 90 секунд", points: 1 },
+      { text: "Скромно говорите: «Ну, я журналист, пишу тексты, в общем...»", points: 0 },
+      { text: "Начинаете с комплимента изданию, а потом рассказываете о себе", points: 0 },
+    ]
+  },
+  {
+    text: "Редактор критикует ваш текст прямо на собеседовании: «Это не наш стиль.» Ваша реакция?",
+    options: [
+      { text: "Защищаете текст и объясняете, что редактор просто не понял идею", points: 0 },
+      { text: "Соглашаетесь со всем, обещаете переписать немедленно", points: 0 },
+      { text: "Спокойно принимаете критику, уточняете что именно не подходит, предлагаете альтернативный подход", points: 1 },
+      { text: "Расстраиваетесь и теряете нить разговора", points: 0 },
+    ]
+  },
+  {
+    text: "Вас спрашивают: «Почему Vogue, а не Elle или Harper's Bazaar?»",
+    options: [
+      { text: "«Честно говоря, я подала везде — но Vogue звучит круче»", points: 0 },
+      { text: "«Vogue — это стандарт индустрии, здесь я смогу расти рядом с лучшими»", points: 0 },
+      { text: "Объясняете конкретно: редакционная политика, стиль материалов, ценности бренда — и как это совпадает с вашим видением журналистики", points: 1 },
+      { text: "«Мне нравится эстетика бренда и обложки»", points: 0 },
+    ]
+  },
+  {
+    text: "Вам предлагают зарплату ниже ожидаемой, но говорят: «Зато это Vogue.» Вы:",
+    options: [
+      { text: "Соглашаетесь не раздумывая — ведь это Vogue", points: 0 },
+      { text: "Отказываетесь сразу — ниже рынка не работаете", points: 0 },
+      { text: "Благодарите за предложение, называете свою цифру и аргументируете её опытом и рыночными данными", points: 1 },
+      { text: "Спрашиваете про бонусы и возможность пересмотра зарплаты через 3–6 месяцев", points: 0 },
+    ]
+  },
+  {
+    text: "В конце встречи редактор спрашивает: «Есть вопросы?» Вы:",
+    options: [
+      { text: "«Нет, всё понятно, спасибо большое!»", points: 0 },
+      { text: "Задаёте заранее подготовленный вопрос о команде или процессе работы над материалами", points: 1 },
+      { text: "Спрашиваете про зарплату ещё раз", points: 0 },
+      { text: "Уточняете сроки обратной связи и следующие шаги", points: 0 },
+    ]
+  },
+  {
+    text: "Вас спрашивают о вашей слабой стороне как журналиста. Вы отвечаете:",
+    options: [
+      { text: "«Я слишком перфекционист» — и улыбаетесь", points: 0 },
+      { text: "Называете реальную слабость и сразу объясняете, как работаете над ней", points: 1 },
+      { text: "Говорите, что слабостей нет — только зоны роста", points: 0 },
+      { text: "Теряетесь и говорите: «Ну, не знаю... наверное, дедлайны иногда»", points: 0 },
+    ]
+  },
+  {
+    text: "Переговоры затянулись. Редактор уходит от конкретных условий работы. Вы:",
+    options: [
+      { text: "Терпеливо ждёте — неловко торопить", points: 0 },
+      { text: "Мягко, но конкретно возвращаете разговор к сути: «Я хотела бы уточнить условия...»", points: 1 },
+      { text: "Начинаете говорить сами — рассказываете о своих проектах, чтобы заполнить паузу", points: 0 },
+      { text: "Прямо спрашиваете: «Вы готовы сделать предложение?»", points: 0 },
+    ]
+  },
+  {
+    text: "После собеседования вам говорят: «Мы свяжемся с вами.» Вы:",
+    options: [
+      { text: "Благодарите за встречу, уточняете сроки ответа и прощаетесь профессионально", points: 1 },
+      { text: "Пишете письмо с благодарностью в тот же день", points: 0 },
+      { text: "Ждёте — лишняя инициатива неуместна", points: 0 },
+      { text: "Звоните на следующий день, чтобы узнать результат", points: 0 },
+    ]
+  },
+];
+
+let current = 0, score = 0, selected = null;
+
+function startQuiz() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('qNumber').textContent = 'Вопрос ' + String(current + 1).padStart(2, '0');
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('progressCount').textContent = (current + 1) + ' / ' + questions.length;
+  document.getElementById('progressFill').style.width = ((current / questions.length) * 100) + '%';
+
+  const btnNext = document.getElementById('btnNext');
+  btnNext.disabled = true;
+  btnNext.textContent = current === questions.length - 1 ? 'Узнать результат →' : 'Следующий вопрос →';
+  selected = null;
+
+  const list = document.getElementById('optionsList');
+  list.innerHTML = '';
+  const letters = ['А', 'Б', 'В', 'Г'];
+  q.options.forEach((opt, i) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span><span>' + opt.text + '</span>';
+    btn.onclick = () => selectOption(i);
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+
+function selectOption(index) {
+  if (selected !== null) return;
+  selected = index;
+  document.querySelectorAll('.option-btn').forEach((b, i) => {
+    b.disabled = true;
+    if (i === index) b.classList.add('selected');
+  });
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQuestion() {
+  if (selected === null) return;
+  score += questions[current].options[selected].points;
+
+  const inner = document.getElementById('quizInner');
+  inner.classList.add('fade-out');
+  setTimeout(() => {
+    inner.classList.remove('fade-out');
+    current++;
+    if (current >= questions.length) showResult();
+    else renderQuestion();
+  }, 250);
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+
+  const max = questions.length * 1;
+  const pct = score / max;
+  let verdict, desc, tips;
+
+  if (score >= 7) {
+    verdict = 'Добро пожаловать<br>в <em>редакцию</em>';
+    desc = 'Вы уверены в себе, знаете цену своему опыту и умеете вести диалог даже в напряжённых ситуациях. Vogue берёт таких людей.';
+    tips = { title: 'Что делает вас сильным кандидатом', items: [
+      'Вы чётко аргументируете свою ценность для работодателя',
+      'Принимаете критику конструктивно и не теряетесь',
+      'Умеете задавать правильные вопросы в нужный момент',
+      'Профессионально завершаете переговоры',
+    ]};
+  } else if (score >= 5) {
+    verdict = 'Почти<br><em>Vogue</em>';
+    desc = 'Потенциал очевиден, и редактор это видит. Но в ключевые моменты вы уступаете там, где стоило бы настоять. Ещё немного работы над собой — и вы готовы.';
+    tips = { title: 'Над чем стоит поработать', items: [
+      'Готовьте конкретные аргументы для переговоров о зарплате',
+      'Изучайте издание глубже — редакционную политику, не только эстетику',
+      'Тренируйте уверенность в моментах, когда хочется промолчать',
+      'Формулируйте вопросы к работодателю заранее',
+    ]};
+  } else {
+    verdict = 'Пока не<br><em>Vogue</em>';
+    desc = 'Не расстраивайтесь — это не приговор, а точка отсчёта. Навыки переговоров — это не талант, а практика. Изучите тему, попробуйте снова.';
+    tips = { title: 'С чего начать подготовку', items: [
+      'Изучите издание до собеседования — его ценности и последние материалы',
+      'Подготовьте самопрезентацию на 60–90 секунд и отрепетируйте её',
+      'Никогда не соглашайтесь на первое предложение без переговоров',
+      'Всегда готовьте 2–3 вопроса к работодателю',
+    ]};
+  }
+
+  document.getElementById('resVerdict').innerHTML = verdict;
+  document.getElementById('resScore').textContent = 'Баллов: ' + score + ' из ' + max;
+  document.getElementById('resDesc').textContent = desc;
+  document.getElementById('resTips').innerHTML =
+    '<div class="res-tips-title">' + tips.title + '</div><ul>' +
+    tips.items.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+}
+
+function restartQuiz() {
+  current = 0; score = 0; selected = null;
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('progressFill').style.width = '0%';
+  renderQuestion();
+}
+</script>
+</body>
+</html>
